@@ -22,14 +22,14 @@ con = psycopg2.connect(host = "localhost",
 
 # 2) Execute the SQL sentences to create your tables using the SQLAlchemy's execute function
 cur = con.cursor()
-cur.execute("""DROP TABLE publishers""")
+# cur.execute("""DROP TABLE publishers""")
 cur.execute("""CREATE TABLE publishers(
     publisher_id INT NOT NULL,
     name VARCHAR(255) NOT NULL,
     PRIMARY KEY(publisher_id))""")
 
 con.commit()
-cur.execute("""DROP TABLE authors""")
+# cur.execute("""DROP TABLE authors""")
 cur.execute("""CREATE TABLE authors(
     author_id INT NOT NULL,
     first_name VARCHAR(100) NOT NULL,
@@ -37,7 +37,7 @@ cur.execute("""CREATE TABLE authors(
     last_name VARCHAR(100) NULL,
     PRIMARY KEY(author_id))""")
 
-cur.execute("""DROP TABLE books""")
+# cur.execute("""DROP TABLE books""")
 cur.execute("""CREATE TABLE books(
     book_id INT NOT NULL,
     title VARCHAR(255) NOT NULL,
@@ -50,7 +50,7 @@ cur.execute("""CREATE TABLE books(
     CONSTRAINT fk_publisher FOREIGN KEY(publisher_id) REFERENCES publishers(publisher_id)
 )""")
 con.commit()
-cur.execute("""DROP TABLE book_authors""")
+# cur.execute("""DROP TABLE book_authors""")
 cur.execute("""CREATE TABLE book_authors (
     book_id INT NOT NULL,
     author_id INT NOT NULL,
