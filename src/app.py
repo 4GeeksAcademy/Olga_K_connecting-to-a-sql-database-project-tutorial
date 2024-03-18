@@ -7,30 +7,27 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # 1) Connect to the database here using the SQLAlchemy's create_engine function
-
-   
-
-
-import psycopg2
-
-con = psycopg2.connect(host = "localhost",
-    user = "gitpod", 
-    password = "postgres",
-    database = "Olga", # Nombre de la tabla que si la hemos creado anteriormente
-
-)
+def connect():
+    global engine # Esto nos permite usar una variable global llamada motor
+    # Una "cadena de conexión" es básicamente una cadena que contiene todas las credenciales de la base de datos juntas
+    connection_string = f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}/{os.getenv('DB_NAME')}"
+    print("Starting the connection...")
+    engine = create_engine(connection_string).execution_options(autocommit=True)
+    engine.connect()
+    return engine
+connect()
 
 # 2) Execute the SQL sentences to create your tables using the SQLAlchemy's execute function
-cur = con.cursor()
+
 # cur.execute("""DROP TABLE publishers""")
-cur.execute("""CREATE TABLE publishers(
+engine.execute("""CREATE TABLE publishers(
     publisher_id INT NOT NULL,
     name VARCHAR(255) NOT NULL,
     PRIMARY KEY(publisher_id))""")
 
-con.commit()
+
 # cur.execute("""DROP TABLE authors""")
-cur.execute("""CREATE TABLE authors(
+engine.execute("""CREATE TABLE authors(
     author_id INT NOT NULL,
     first_name VARCHAR(100) NOT NULL,
     middle_name VARCHAR(50) NULL,
@@ -38,7 +35,7 @@ cur.execute("""CREATE TABLE authors(
     PRIMARY KEY(author_id))""")
 
 # cur.execute("""DROP TABLE books""")
-cur.execute("""CREATE TABLE books(
+engine.execute("""CREATE TABLE books(
     book_id INT NOT NULL,
     title VARCHAR(255) NOT NULL,
     total_pages INT NULL,
@@ -49,9 +46,9 @@ cur.execute("""CREATE TABLE books(
     PRIMARY KEY(book_id),
     CONSTRAINT fk_publisher FOREIGN KEY(publisher_id) REFERENCES publishers(publisher_id)
 )""")
-con.commit()
-# cur.execute("""DROP TABLE book_authors""")
-cur.execute("""CREATE TABLE book_authors (
+
+
+engine.execute("""CREATE TABLE book_authors (
     book_id INT NOT NULL,
     author_id INT NOT NULL,
     PRIMARY KEY(book_id, author_id),
@@ -59,10 +56,10 @@ cur.execute("""CREATE TABLE book_authors (
     CONSTRAINT fk_author FOREIGN KEY(author_id) REFERENCES authors(author_id) ON DELETE CASCADE
 )""")
 
-con.commit()
+
 
 # ### INSERT: Introducir en la base de datos algún registro
-cur.execute("""
+engine.execute("""
 INSERT INTO publishers(publisher_id, name) VALUES (1, 'O Reilly Media');
 INSERT INTO publishers(publisher_id, name) VALUES (2, 'A Book Apart');
 INSERT INTO publishers(publisher_id, name) VALUES (3, 'A K PETERS');
